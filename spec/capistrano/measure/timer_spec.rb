@@ -74,15 +74,17 @@ describe Capistrano::Measure::Timer do
       expect(event.indent).to eq 0
     end
 
-    it "should raise exception with unstarted event" do
-      expect{ subject.stop('test123') }.to raise_error(RuntimeError)
+    it "should report error with unstarted event" do
+      subject.should_receive(:report_missing_event_start).once
+      subject.stop('test123')
     end
   end
 
   describe "#report_events" do
-    it "should raise exception if called in the middle of process" do
+    it "should report an error if called in the middle of process" do
       subject.start('test')
-      expect{ subject.report_events }.to raise_error(RuntimeError)
+      subject.should_receive(:report_open_events).once
+      subject.report_events
     end
 
     context "in completed state" do
